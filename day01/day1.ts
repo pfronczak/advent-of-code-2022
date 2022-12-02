@@ -1,4 +1,4 @@
-const day1_1 = (input) => {
+const day1_1 = (input: string[]): number => {
     let maxCal = 0;
     let currElfSum = 0;
     for (const line of input) {
@@ -14,7 +14,7 @@ const day1_1 = (input) => {
     return maxCal;
 };
 
-const day1_2 = (input) => {
+const day1_2 = (input: string[]): number => {
     let elfCal = [];
     let currElfSum = 0;
     for (const line of input) {
