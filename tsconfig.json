@@ -2,5 +2,8 @@
     "compilerOptions": {
         "lib": ["ES2021"],
         "module": "ES2020"
+    },
+    "ts-node": {
+        "esm": true
     }
 }

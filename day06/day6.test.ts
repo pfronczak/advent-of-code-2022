@@ -3,7 +3,7 @@ import { day6_1, day6_2 } from './day6';
 
 const input = readFileSync('day06/input.txt', 'utf8');
 
-describe('Day 6: Supply Stacks', () => {
+describe('Day 6: Tuning Trouble', () => {
     test('Part 1, examples', () => {
         expect(day6_1('mjqjpqmgbljsphdztnvjfqwrcgsmlb')).toBe(7);
         expect(day6_1('bvwbjplbgvbhsrlpgdmjqwftvncz')).toBe(5);
