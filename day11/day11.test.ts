@@ -21,7 +21,7 @@ describe('Day 11: Monkey in the Middle', () => {
     });
 
     test('Part 2, example 1', () => {
-        expect(day11_2(sample)).toBe(0);
+        expect(day11_2(sample)).toBe(2713310158);
     });
 
     test('Part 2, puzzle input', () => {

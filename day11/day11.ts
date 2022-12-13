@@ -19,7 +19,7 @@ const day11_2 = (input: string[]): number => {
     }
     for (let round = 1; round <= 10000; round++) {
         for (const monkey of monkeys) {
-            monkey.inspect(monkeys, worry => Math.floor(worry % 100));
+            monkey.inspect(monkeys, worry => Math.floor(worry % (13*17*19*23)));
         }
 
         if (round == 1 || round == 20 || round % 1000 == 0) {
