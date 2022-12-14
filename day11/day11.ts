@@ -12,14 +12,14 @@ const day11_1 = (input: string[]): number => {
     return monkeys[0].itemsInspected * monkeys[1].itemsInspected;
 };
 
-const day11_2 = (input: string[]): number => {
+const day11_2 = (input: string[], modulo: number): number => {
     const monkeys: Monkey[] = [];
     for (let i = 0; i < input.length; i += 7) {
         monkeys.push(new Monkey(input.slice(i, i + 6)));
     }
     for (let round = 1; round <= 10000; round++) {
         for (const monkey of monkeys) {
-            monkey.inspect(monkeys, worry => Math.floor(worry % (13*17*19*23)));
+            monkey.inspect(monkeys, worry => Math.floor(worry % modulo));
         }
 
         if (round == 1 || round == 20 || round % 1000 == 0) {

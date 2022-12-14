@@ -21,10 +21,10 @@ describe('Day 11: Monkey in the Middle', () => {
     });
 
     test('Part 2, example 1', () => {
-        expect(day11_2(sample)).toBe(2713310158);
+        expect(day11_2(sample, 13 * 17 * 19 * 23)).toBe(2713310158);
     });
 
     test('Part 2, puzzle input', () => {
-        expect(day11_2(input)).toBe(0);
+        expect(day11_2(input, 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19)).toBe(15693274740);
     });
 });
