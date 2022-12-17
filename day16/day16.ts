@@ -1,6 +1,11 @@
+let bestSolutionFound;
+let bestSolutionPath;
+
 const day16_1 = (input: string[]): number => {
     const tunnelsGraph = parseInput(input);
     const distanceMatrix = distances(tunnelsGraph);
+    bestSolutionFound = 0;
+    bestSolutionPath = [];
     solve(
         tunnelsGraph.get('AA'),
         Array.from(
@@ -18,9 +23,6 @@ const day16_1 = (input: string[]): number => {
     console.log(bestSolutionPath);
     return bestSolutionFound;
 };
-
-let bestSolutionFound = 0;
-let bestSolutionPath;
 
 function solve(
     start: Node,
@@ -66,8 +68,181 @@ function solve(
 }
 
 const day16_2 = (input: string[]): number => {
-    return 0;
+    const tunnelsGraph = parseInput(input);
+    const distanceMatrix = distances(tunnelsGraph);
+    bestSolutionFound = 0;
+    bestSolutionPath = [];
+    solveTogether(
+        [tunnelsGraph.get('AA'), tunnelsGraph.get('AA')],
+        Array.from(
+            Array.from(distanceMatrix.keys()).filter((n) => n != 'AA')
+        ).sort(
+            (a, b) =>
+                tunnelsGraph.get(b).flowRate - tunnelsGraph.get(a).flowRate
+        ),
+        0,
+        [[], []],
+        tunnelsGraph,
+        distanceMatrix,
+        26,
+        [26, 26]
+    );
+    console.log(bestSolutionPath);
+    return bestSolutionFound;
 };
+
+function solveTogether(
+    start: Node[],
+    nodesLeft: string[],
+    score: number,
+    path: string[][],
+    graph: Map<string, Node>,
+    distanceMatrix: Map<string, Map<string, number>>,
+    roundsLeft: number,
+    destRound: number[]
+) {
+    let branchUpperBound =
+        score +
+        Math.max(0, destRound[0]) * start[0].flowRate +
+        Math.max(0, destRound[1]) * start[1].flowRate +
+        (roundsLeft > 2
+            ? nodesLeft.reduce(
+                  (sum, n) => (sum += graph.get(n).flowRate * (roundsLeft - 2)),
+                  0
+              )
+            : 0);
+    if (branchUpperBound < bestSolutionFound) {
+        return;
+    }
+
+    if (destRound[0] == roundsLeft) {
+        score += roundsLeft * start[0].flowRate;
+        path[0] = [...path[0], start[0].name];
+    }
+    if (destRound[1] == roundsLeft) {
+        score += roundsLeft * start[1].flowRate;
+        path[1] = [...path[1], start[1].name];
+    }
+
+    if (
+        (nodesLeft.length == 0 &&
+            destRound[0] >= roundsLeft &&
+            destRound[1] >= roundsLeft) ||
+        roundsLeft == 0
+    ) {
+        process.stdout.write(`${roundsLeft}: ${path[0]} ${path[1]}\n`);
+        process.stdout.write(`score: ${score}\n`);
+        if (score > bestSolutionFound) {
+            bestSolutionFound = score;
+            bestSolutionPath = path;
+        }
+        return;
+    }
+
+    if (nodesLeft.length == 0) {
+        solveTogether(
+            [start[0], start[1]],
+            [],
+            score,
+            [...path],
+            graph,
+            distanceMatrix,
+            Math.max(0, Math.min(destRound[0], destRound[1])),
+            [destRound[0], destRound[1]]
+        );
+    }
+
+    if (destRound[0] == roundsLeft && destRound[1] == roundsLeft) {
+        for (let i = 0; i < nodesLeft.length; i++) {
+            for (let j = 0; j < nodesLeft.length; j++) {
+                if (j == i) continue;
+                solveTogether(
+                    [graph.get(nodesLeft[i]), graph.get(nodesLeft[j])],
+                    nodesLeft.filter(
+                        (n) => n != nodesLeft[i] && n != nodesLeft[j]
+                    ),
+                    score,
+                    [...path],
+                    graph,
+                    distanceMatrix,
+                    Math.max(
+                        roundsLeft -
+                            distanceMatrix
+                                .get(start[0].name)
+                                .get(nodesLeft[i]) -
+                            1,
+                        roundsLeft -
+                            distanceMatrix
+                                .get(start[1].name)
+                                .get(nodesLeft[j]) -
+                            1,
+                        0
+                    ),
+                    [
+                        roundsLeft -
+                            distanceMatrix
+                                .get(start[0].name)
+                                .get(nodesLeft[i]) -
+                            1,
+                        roundsLeft -
+                            distanceMatrix
+                                .get(start[1].name)
+                                .get(nodesLeft[j]) -
+                            1,
+                    ]
+                );
+            }
+        }
+    } else if (destRound[0] == roundsLeft) {
+        for (const node of nodesLeft) {
+            solveTogether(
+                [graph.get(node), start[1]],
+                nodesLeft.filter((n) => n != node),
+                score,
+                [...path],
+                graph,
+                distanceMatrix,
+                Math.max(
+                    roundsLeft -
+                        distanceMatrix.get(start[0].name).get(node) -
+                        1,
+                    destRound[1],
+                    0
+                ),
+                [
+                    roundsLeft -
+                        distanceMatrix.get(start[0].name).get(node) -
+                        1,
+                    destRound[1],
+                ]
+            );
+        }
+    } else if (destRound[1] == roundsLeft) {
+        for (const node of nodesLeft) {
+            solveTogether(
+                [start[0], graph.get(node)],
+                nodesLeft.filter((n) => n != node),
+                score,
+                [...path],
+                graph,
+                distanceMatrix,
+                Math.max(
+                    destRound[0],
+                    roundsLeft -
+                        distanceMatrix.get(start[1].name).get(node) -
+                        1,
+                    0
+                ),
+                [
+                    destRound[0],
+                    roundsLeft -
+                        distanceMatrix.get(start[1].name).get(node) -
+                        1,
+                ]
+            );
+        }
+    }
+}
 
 function parseInput(input: string[]) {
     const graph: Map<string, Node> = new Map();

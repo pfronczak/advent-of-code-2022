@@ -18,10 +18,10 @@ describe('Day 16: Proboscidea Volcanium', () => {
     });
 
     test('Part 2, example 1', () => {
-        expect(day16_2(sample)).toBe(0);
+        expect(day16_2(sample)).toBe(1707);
     });
 
     test('Part 2, puzzle input', () => {
-        expect(day16_2(input)).toBe(0);
+        expect(day16_2(input)).toBe(2513);
     });
 });
